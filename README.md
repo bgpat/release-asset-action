@@ -4,13 +4,15 @@ A GitHub action to add files to a release.
 
 ### Parameters
 
-| Parameter | Description | Required |
-| --------- | ----------- | -------- |
-| `file` | The file to upload | Optional |
-| `files` | A new line seperated list of files upload | Optional |
-| `pattern` | Glob pattern of files to upload | Optional |
-| `github-token` | The GitHub token used to create an authenticated client | Required |
-| `release-url` | The target url for the release file uploads | Optional |
+| Parameter         | Description                                             | Required |
+| ----------------- | ------------------------------------------------------- | -------- |
+| `file`            | The file to upload                                      | Optional |
+| `files`           | A new line seperated list of files upload               | Optional |
+| `pattern`         | Glob pattern of files to upload                         | Optional |
+| `github-token`    | The GitHub token used to create an authenticated client | Required |
+| `release-url`     | The target url for the release file uploads             | Optional |
+| `release-id`      | The ID of the release                                   | Optional |
+| `allow-overwrite` | Allow overwriting of existing files                     | Optional |
 
 ### There are two ways you can use this action:
 
@@ -49,39 +51,39 @@ jobs:
 
 Example on tag event chained after another action:
 
- ```
- name: Build and relase
+```
+name: Build and relase
 
 on:
-  push:
-    tags:
-      - 'v*'
+ push:
+   tags:
+     - 'v*'
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v1
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        body: Auto generated release
-        draft: true
-        prerelease: false
-    - name: Build
-      run: make
-    - name: Upload Assets to Release with a wildcard
-      uses: csexton/release-asset-action@v2
-      with:
-        pattern: "build/*"
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        release-url: ${{ steps.create_release.outputs.upload_url }}
- ```
+ build:
+   runs-on: ubuntu-latest
+   steps:
+   - uses: actions/checkout@v1
+   - name: Create Release
+     id: create_release
+     uses: actions/create-release@v1
+     env:
+       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+     with:
+       tag_name: ${{ github.ref }}
+       release_name: Release ${{ github.ref }}
+       body: Auto generated release
+       draft: true
+       prerelease: false
+   - name: Build
+     run: make
+   - name: Upload Assets to Release with a wildcard
+     uses: csexton/release-asset-action@v2
+     with:
+       pattern: "build/*"
+       github-token: ${{ secrets.GITHUB_TOKEN }}
+       release-url: ${{ steps.create_release.outputs.upload_url }}
+```
 
 ### Selecting the right files with this action to upload
 
@@ -94,7 +96,6 @@ To upload a single file add a step like the following your workflow:
         file: my-release.zip
         github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
-
 
 You can also set `files` or `pattern` if you need to upload multiple files.
 
@@ -120,7 +121,6 @@ Pattern to glob for files:
     pattern: "build/*.zip"
     github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
-
 
 # License
 
